@@ -75,7 +75,7 @@ JREnum currently only supports integer explicit values (bit shifts and masks won
 
 ## Version History
 
-### v0.3: Dec 10 2012
+### v0.2: Dec 10 2012
 
 * [NEW] Generalized to support bidirectional enum label/value lookup and full runtime access to lookup dictionary.
 * [NEW] Add passing tests.
