@@ -23,25 +23,25 @@ write:
 
 This will generate the previous `typedef enum` and will also generate a corresponding suite of functions:
 
-** NSString* StreamStateToString(int value) **
+** NSString\* StreamStateToString(int value) **
 
 Given a value, will return the enum's string representation. For example `StreamStateToString(2)` would return `@"Stream_Connecting"`.
 
 When confronted with values not defined in the enumeration, this function will return a placeholder string explaining the situation. For example `StreamStateToString(2000)` would return `@"<unknown StreamState: 2000>"`.
 
-** BOOL StreamStateFromString(NSString *enumLabel, StreamState *enumValue) **
+** BOOL StreamStateFromString(NSString \*enumLabel, StreamState \*enumValue) **
 
 Attempts to return the enum's `int` value given its label. For example `StreamStateFromString(@"Stream_Disconnecting", &value)` would return `YES` and set `value` to `3`.
 
 This function returns `NO` if the label for the enum type is unknown. For example `StreamStateFromString(@"lackadaisical", &value)` would return `NO` and leave `value` untouched.
 
-** NSDictionary* StreamStateByValue() **
+** NSDictionary\* StreamStateByValue() **
 
 Returns a dictionary whose keys are the enum's values. Used by StreamStateToString().
 
 When enums have multiple overlapping values, the current implementation exhibits last-write-wins behavior.
 
-** NSDictionary* StreamStateByLabel() ** 
+** NSDictionary\* StreamStateByLabel() ** 
 
 Returns a dictionary whose keys are the enum's labels. Used by StreamStateFromString(). This is the function you want if you wish to enumerate an enum's labels and values at runtime.
 
