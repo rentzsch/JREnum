@@ -10,6 +10,7 @@
 		795439BE16756A7C00B88D38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795439BD16756A7C00B88D38 /* Foundation.framework */; };
 		795439C116756A7C00B88D38 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439C016756A7C00B88D38 /* main.m */; };
 		795439CE16756AE000B88D38 /* SplitEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439CD16756AE000B88D38 /* SplitEnums.m */; };
+		795439D91676641000B88D38 /* SplitEnumClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439D81676641000B88D38 /* SplitEnumClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +33,8 @@
 		795439CB16756A9200B88D38 /* JREnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JREnum.h; path = ../../JREnum.h; sourceTree = "<group>"; };
 		795439CC16756AE000B88D38 /* SplitEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitEnums.h; sourceTree = "<group>"; };
 		795439CD16756AE000B88D38 /* SplitEnums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitEnums.m; sourceTree = "<group>"; };
+		795439D71676641000B88D38 /* SplitEnumClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitEnumClient.h; sourceTree = "<group>"; };
+		795439D81676641000B88D38 /* SplitEnumClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitEnumClient.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +78,8 @@
 			isa = PBXGroup;
 			children = (
 				795439C016756A7C00B88D38 /* main.m */,
+				795439D71676641000B88D38 /* SplitEnumClient.h */,
+				795439D81676641000B88D38 /* SplitEnumClient.m */,
 				795439CC16756AE000B88D38 /* SplitEnums.h */,
 				795439CD16756AE000B88D38 /* SplitEnums.m */,
 				795439CB16756A9200B88D38 /* JREnum.h */,
@@ -144,6 +149,7 @@
 			files = (
 				795439C116756A7C00B88D38 /* main.m in Sources */,
 				795439CE16756AE000B88D38 /* SplitEnums.m in Sources */,
+				795439D91676641000B88D38 /* SplitEnumClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +246,7 @@
 				795439CA16756A7C00B88D38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
