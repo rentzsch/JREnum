@@ -79,7 +79,7 @@
     BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
         NSNumber *value = [ENUM_TYPENAME##ByLabel() objectForKey:enumLabel];	\
         if (value) {	\
-            *enumValue = [value intValue];	\
+            *enumValue = (ENUM_TYPENAME)[value intValue];	\
             return YES;	\
         } else {	\
             return NO;	\
