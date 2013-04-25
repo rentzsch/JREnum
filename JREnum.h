@@ -1,6 +1,6 @@
-// JREnum.h semver:0.2
+// JREnum.h semver:1.0.1
 //   Original implementation by Benedict Cohen: http://benedictcohen.co.uk
-//   Copyright (c) 2012 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
+//   Copyright (c) 2012-2013 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
