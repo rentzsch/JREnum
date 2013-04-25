@@ -71,7 +71,42 @@ You can also explicitly define enum integer values:
 
 In the above scenario, `Stream_Disconnected`'s value will be `42`, `Stream_Connecting`'s will be `43` and so on.
 
-JREnum currently only supports integer explicit values (bit shifts and masks won't work). Patches welcome.
+
+## Bitwise enums:  (NS_OPTIONS)
+    
+Same syntax as above…  but exchange with `JROptions(TYPE_NAME,…)` OR `JROptionsDeclare(TYPE_NAME,…)` + `JROptionsDefine(TYPE_NAME)`.
+    JROptions (Align,   AlignLeft    	 	= 0x00000001,
+               		    AlignRight  	  	= 0x00000010,
+				    	AlignTop		   	= 0x00000100,
+				    	AlignBottom		    = 0x00001000,
+				    	AlignTopLeft	   	= 0x00000101,
+	    				AlignBottomLeft 	= 0x00001001,
+				    	AlignTopRight	 	= 0x00000110,
+	    				AlignBottomRight	= 0x00001010
+     );
+
+	NSLog(@"%@",AlignByValue()); ->		{	256 = AlignTop;
+							    			4096 = AlignBottom;	
+									    	257 = AlignTopLeft;
+									    	1 = AlignLeft;
+									    	4097 = AlignBottomLeft;
+									    	16 = AlignRight;
+									    	272 = AlignTopRight;
+									    	4112 = AlignBottomRight;
+										}
+	
+	Align botRight 		  = AlignBottomRight;
+	Align botRightBitWise = AlignBottom	| AlignRight;
+	
+	NSLog(@"Are They The Same: %@", (botRightBitWise == botRight) ? @"YES" : @"NO"); ->
+> Are They The Same: YES
+
+	NSLog(@"Combinations, like Apple does... %@", AlignToString(botRightBitWise)); ->
+
+> Combinations, like Apple does... AlignBottomRight
+
+
+JREnum currently <s>only supports integer explicit values (bit shifts and masks won't work).</s> Patches welcome.
 
 ## Version History
 
