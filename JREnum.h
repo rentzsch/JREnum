@@ -22,7 +22,7 @@
     extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
     extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
     _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunused-value\"") \
+    _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
     static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
     _Pragma("clang diagnostic pop")
 
