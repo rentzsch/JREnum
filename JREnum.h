@@ -4,6 +4,7 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
+
 #define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
     typedef enum {  \
         ENUM_CONSTANTS  \
