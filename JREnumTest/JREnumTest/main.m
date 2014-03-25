@@ -11,8 +11,34 @@ JREnum(EnumWith1ConstantSansExplicitValuesTrailingComma,
 JREnum(EnumWith1ConstantWithExplicitValues,
        EnumWith1ConstantWithExplicitValues_Constant1 = 42);
 
+JREnum(EnumWith3BitshiftConstants,
+       EnumWith2BitshiftConstants_1 = 1 << 0,
+       EnumWith2BitshiftConstants_2 = 1 << 1,
+       EnumWith2BitshiftConstants_4 = 1 << 2,
+       );
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
+        {{
+            assert([EnumWith3BitshiftConstantsByLabel() count] == 3);
+            
+            assert(1 == EnumWith2BitshiftConstants_1);
+            assert([@"EnumWith2BitshiftConstants_1" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_1)]);
+            
+            assert(2 == EnumWith2BitshiftConstants_2);
+            assert([@"EnumWith2BitshiftConstants_2" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_2)]);
+            
+            assert(4 == EnumWith2BitshiftConstants_4);
+            assert([@"EnumWith2BitshiftConstants_4" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_4)]);
+            
+            assert([@"<unknown EnumWith3BitshiftConstants: 3>" isEqualToString:EnumWith3BitshiftConstantsToString(3)]);
+            
+            EnumWith3BitshiftConstants value;
+            assert(EnumWith3BitshiftConstantsFromString(@"EnumWith2BitshiftConstants_1", &value));
+            assert(value == EnumWith2BitshiftConstants_1);
+            
+            assert(!EnumWith3BitshiftConstantsFromString(@"bogus", &value));
+        }}
         {{
             assert([EnumWith1ConstantSansExplicitValuesByLabel() count] == 1);
             assert([[EnumWith1ConstantSansExplicitValuesByLabel() objectForKey:@"EnumWith1ConstantSansExplicitValues_Constant1"] isEqual:[NSNumber numberWithInt:0]]);
