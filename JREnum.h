@@ -74,20 +74,20 @@
 
 #define _JREnum_GenerateImplementation(ENUM_TYPENAME)  \
     NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
-        NSMutableCharacterSet *charSet = JRAUTORELEASE([[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy]); \
-        [charSet addCharactersInString:@","]; \
-        NSString *constantsString = [_##ENUM_TYPENAME##_constants_string stringByTrimmingCharactersInSet:charSet]; \
+        NSString *constantsString = _##ENUM_TYPENAME##_constants_string; \
+        constantsString = [[constantsString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""]; \
+        if ([constantsString hasSuffix:@","]) { \
+            constantsString = [constantsString substringToIndex:[constantsString length]-1]; \
+        } \
         NSArray *stringPairs = [constantsString componentsSeparatedByString:@","];	\
         NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];	\
         int nextDefaultValue = 0;	\
         for (NSString *stringPair in stringPairs) {	\
             NSArray *labelAndValueString = [stringPair componentsSeparatedByString:@"="];	\
             NSString *label = [labelAndValueString objectAtIndex:0];	\
-            label = [label stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];    \
             NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;	\
             int value; \
             if (valueString) { \
-                valueString = [valueString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]; \
                 if ([valueString hasPrefix:@"0x"]) { \
                     [[NSScanner scannerWithString:valueString] scanHexInt:(unsigned int*)&value]; \
                 } else { \
