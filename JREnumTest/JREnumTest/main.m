@@ -21,29 +21,6 @@ JREnum(EnumWith3BitshiftConstants,
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         {{
-            assert([EnumWith3BitshiftConstantsByLabel() count] == 4);
-            
-            assert(1 == EnumWith2BitshiftConstants_1);
-            assert([@"EnumWith2BitshiftConstants_1" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_1)]);
-            
-            assert(2 == EnumWith2BitshiftConstants_2);
-            assert([@"EnumWith2BitshiftConstants_2" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_2)]);
-            
-            assert(4 == EnumWith2BitshiftConstants_4);
-            assert([@"EnumWith2BitshiftConstants_4" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_4)]);
-            
-            assert(1073741824 == EnumWith2BitshiftConstants_1073741824);
-            assert([@"EnumWith2BitshiftConstants_1073741824" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_1073741824)]);
-            
-            assert([@"<unknown EnumWith3BitshiftConstants: 3>" isEqualToString:EnumWith3BitshiftConstantsToString(3)]);
-            
-            EnumWith3BitshiftConstants value;
-            assert(EnumWith3BitshiftConstantsFromString(@"EnumWith2BitshiftConstants_1", &value));
-            assert(value == EnumWith2BitshiftConstants_1);
-            
-            assert(!EnumWith3BitshiftConstantsFromString(@"bogus", &value));
-        }}
-        {{
             assert([EnumWith1ConstantSansExplicitValuesByLabel() count] == 1);
             assert([[EnumWith1ConstantSansExplicitValuesByLabel() objectForKey:@"EnumWith1ConstantSansExplicitValues_Constant1"] isEqual:[NSNumber numberWithInt:0]]);
             
@@ -94,17 +71,44 @@ int main(int argc, const char * argv[]) {
             assert(!SplitEnumWith1ConstantWithExplicitValuesFromString(@"foo", &a));
         }}
         {{
-            assert([AlignByLabel() count] == 8);
+            assert([EnumWith3BitshiftConstantsByLabel() count] == 4);
             
-            Align a = 1;
+            assert(1 == EnumWith2BitshiftConstants_1);
+            assert([@"EnumWith2BitshiftConstants_1" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_1)]);
             
-            assert(AlignLeft == a);
-            assert([@"AlignLeft" isEqualToString:AlignToString(a)]);
+            assert(2 == EnumWith2BitshiftConstants_2);
+            assert([@"EnumWith2BitshiftConstants_2" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_2)]);
             
+            assert(4 == EnumWith2BitshiftConstants_4);
+            assert([@"EnumWith2BitshiftConstants_4" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_4)]);
+            
+            assert(1073741824 == EnumWith2BitshiftConstants_1073741824);
+            assert([@"EnumWith2BitshiftConstants_1073741824" isEqualToString:EnumWith3BitshiftConstantsToString(EnumWith2BitshiftConstants_1073741824)]);
+            
+            assert([@"<unknown EnumWith3BitshiftConstants: 3>" isEqualToString:EnumWith3BitshiftConstantsToString(3)]);
+            
+            EnumWith3BitshiftConstants value;
+            assert(EnumWith3BitshiftConstantsFromString(@"EnumWith2BitshiftConstants_1", &value));
+            assert(value == EnumWith2BitshiftConstants_1);
+            
+            assert(!EnumWith3BitshiftConstantsFromString(@"bogus", &value));
+        }}
+        {{
+            assert([@"AlignLeft" isEqualToString:AlignToString(1 << 0)]);
+            assert([@"AlignRight" isEqualToString:AlignToString(1 << 1)]);
+            assert([@"AlignTop" isEqualToString:AlignToString(1 << 2)]);
+            assert([@"AlignBottom" isEqualToString:AlignToString(1 << 3)]);
+            
+            assert([@"AlignTopLeft" isEqualToString:AlignToString(AlignTop | AlignLeft)]);
+            assert([@"AlignBottomLeft" isEqualToString:AlignToString(AlignBottom | AlignLeft)]);
+            assert([@"AlignTopRight" isEqualToString:AlignToString(AlignTop | AlignRight)]);
+            assert([@"AlignBottomRight" isEqualToString:AlignToString(AlignBottom | AlignRight)]);
+            
+            Align a;
             assert(AlignFromString(AlignToString(AlignLeft), &a));
             assert(AlignLeft == a);
             
-            assert([@"<unknown Align: 2>" isEqualToString:AlignToString(2)]);
+            assert([@"<unknown Align: 3>" isEqualToString:AlignToString(3)]);
         }}
     }
     printf("success\n");
