@@ -59,11 +59,25 @@
 #define JREnumDefine(ENUM_TYPENAME) \
     _JREnum_GenerateImplementation(ENUM_TYPENAME)
 
+#ifndef JRAUTORELEASE
+    #ifndef __has_feature
+        #define __has_feature(x) 0
+    #endif
+    #if __has_feature(objc_arc)
+        #define JRAUTORELEASE(OBJ) (OBJ)
+    #else
+        #define JRAUTORELEASE(OBJ) [(OBJ) autorelease]
+    #endif
+#endif
+
 //--
 
 #define _JREnum_GenerateImplementation(ENUM_TYPENAME)  \
     NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
-        NSArray *stringPairs = [_##ENUM_TYPENAME##_constants_string componentsSeparatedByString:@","];	\
+        NSMutableCharacterSet *charSet = JRAUTORELEASE([[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy]); \
+        [charSet addCharactersInString:@","]; \
+        NSString *constantsString = [_##ENUM_TYPENAME##_constants_string stringByTrimmingCharactersInSet:charSet]; \
+        NSArray *stringPairs = [constantsString componentsSeparatedByString:@","];	\
         NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];	\
         int lastValue = -1;	\
         for (NSString *stringPair in stringPairs) {	\
