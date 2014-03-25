@@ -4,42 +4,6 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
-/*
- 
- 
- 
- */
-
-/**	Usage:
-	Externally visible declarations: (Bitwise example shown)
-	.h		JROptionsDeclare(YourType, YourTypeRed = 00000001, YourTypeGreen = 0x00000010, YourTypeBlue = 00000100);
-	.m		JROptionsDefine(YourType);
-	Private usage:
-	.m		JROptions(YourType, YourTypeRed = 00000001, YourTypeGreen = 0x00000010, YourTypeBlue = 00000100);
-
-	For the following TYPE_NAME_ = YourType    ENUM_VALUE could be... YourTypeGreen
-
-	NSString* TYPE_NAME_ToString(ENUM_VALUE)
-	YourTypeToString(YourTypeGreen) -> @"YourTypeGreen".
-
-	YOUR_TYPE_ aPointer;
-	BOOL TYPE_NAME_FromString(@"ENUM_VALUE", &aPointer)
-	Attempts to return the enum's int value given its label. For example 
-	
-	YourType z = 0;
-	BOOL x = YourTypeFromString(@"YourTypeGreen", &z) 
-	
-	"x" would evaluate to YES and "z" would be to 16 (aka 0x00000010).
-	This function returns NO if the label for the enum type is unknown. 
-	YourTypeFromString(@"lackadaisical", &z) would return NO and leave "z" untouched.
-
-	NSDictionary* TYPE_NAME_ByValue() -> 	(NSDictionary*) @{ NSNumber VALUE : NSString* LABEL }
-		Used by TYPE_NAME_ToString(). If multiple overlapping values exist, last-write-wins.
-
-	NSDictionary* TYPE_NAME_ByLabel() -> 	(NSDictionary*) @{ NSString* LABEL : NSNumber VALUE }
-		Used by TYPE_NAME_FromString().  Use to enumerate an enum's labels and values at runtime.
-*/
-
 #define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
     typedef enum {  \
         ENUM_CONSTANTS  \
@@ -61,6 +25,8 @@
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
     static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
     _Pragma("clang diagnostic pop")
+
+//--
 
 #define JREnumDefine(ENUM_TYPENAME) \
     _JREnum_GenerateImplementation(ENUM_TYPENAME)
