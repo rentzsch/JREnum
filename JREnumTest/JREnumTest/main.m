@@ -4,6 +4,10 @@
 JREnum(EnumWith1ConstantSansExplicitValues,
        EnumWith1ConstantSansExplicitValues_Constant1);
 
+JREnum(EnumWith1ConstantSansExplicitValuesTrailingComma,
+       EnumWith1ConstantSansExplicitValuesTrailingComma_Constant1 , 
+       );
+
 JREnum(EnumWith1ConstantWithExplicitValues,
        EnumWith1ConstantWithExplicitValues_Constant1 = 42);
 
@@ -28,6 +32,9 @@ int main(int argc, const char * argv[]) {
             assert(!EnumWith1ConstantSansExplicitValuesFromString(@"foo", &a));
         }}
         {{
+            assert([EnumWith1ConstantSansExplicitValuesTrailingCommaByLabel() count] == 1);
+        }}
+        {{
             SplitEnumWith1ConstantSansExplicitValues a = 0;
             
             assert(SplitEnumWith1ConstantSansExplicitValues_Constant1 == a);
@@ -38,6 +45,8 @@ int main(int argc, const char * argv[]) {
             a++;
             assert([@"<unknown SplitEnumWith1ConstantSansExplicitValues: 1>" isEqualToString:SplitEnumWith1ConstantSansExplicitValuesToString(a)]);
             assert(!SplitEnumWith1ConstantSansExplicitValuesFromString(@"foo", &a));
+            
+            assert([SplitEnumWith1ConstantSansExplicitValuesByLabel() count] == 1);
         }}
         {{
             SplitEnumWith1ConstantWithExplicitValues a = 42;
@@ -50,6 +59,19 @@ int main(int argc, const char * argv[]) {
             a++;
             assert([@"<unknown SplitEnumWith1ConstantWithExplicitValues: 43>" isEqualToString:SplitEnumWith1ConstantWithExplicitValuesToString(a)]);
             assert(!SplitEnumWith1ConstantWithExplicitValuesFromString(@"foo", &a));
+        }}
+        if(0){{
+            Align a = 1;
+            
+            assert(AlignLeft == a);
+            assert([@"AlignLeft" isEqualToString:AlignToString(a)]);
+            printf("%s\n", [[AlignByValue() description] UTF8String]);
+            printf("%s\n", [AlignToString(AlignLeft) UTF8String]);
+            //assert(AlignFromString(AlignToString(AlignLeft), &a));
+            //assert(AlignLeft == a);
+            
+            //a++;
+            //assert([@"AlignRight" isEqualToString:AlignToString(a)]);
         }}
     }
     printf("success\n");

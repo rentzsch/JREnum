@@ -5,3 +5,5 @@ JREnumDefine(SplitEnumWith1ConstantSansExplicitValues);
 JREnumDefine(SplitEnumWith1ConstantWithExplicitValues);
 
 JREnumDefine(TestClassState);
+
+JROptionsDefine(Align);
