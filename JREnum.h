@@ -4,6 +4,12 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
+/*
+ 
+ 
+ 
+ */
+
 /**	Usage:
 	Externally visible declarations: (Bitwise example shown)
 	.h		JROptionsDeclare(YourType, YourTypeRed = 00000001, YourTypeGreen = 0x00000010, YourTypeBlue = 00000100);
@@ -58,17 +64,6 @@
 
 #define JREnumDefine(ENUM_TYPENAME) \
     _JREnum_GenerateImplementation(ENUM_TYPENAME)
-
-#ifndef JRAUTORELEASE
-    #ifndef __has_feature
-        #define __has_feature(x) 0
-    #endif
-    #if __has_feature(objc_arc)
-        #define JRAUTORELEASE(OBJ) (OBJ)
-    #else
-        #define JRAUTORELEASE(OBJ) [(OBJ) autorelease]
-    #endif
-#endif
 
 //--
 
