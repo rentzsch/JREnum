@@ -153,7 +153,7 @@
             NSScanner *scanner = [NSScanner scannerWithString:valueString];                                   \
             NSUInteger aNumericValue;                                                                         \
             [scanner scanHexInt:(NSInteger)&aNumericValue];                                                   \
-            NSNumber *value = valueString ? [NSNumber numberWithInt:aNumericValue]                            \
+            NSNumber *value = valueString ? [NSNumber numberWithUnsignedInteger:aNumericValue]                \
                                           : @([lastValue intValue]+1);                                        \
             lastValue = value;                                                                                \
             [labelsAndValues addObject:label];                                                                \
