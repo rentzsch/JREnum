@@ -49,6 +49,9 @@ int main(int argc, const char * argv[]) {
             assert([SplitEnumWith1ConstantSansExplicitValuesByLabel() count] == 1);
         }}
         {{
+            assert([SplitEnumWith2ConstantsSansExplicitValuesByLabel() count] == 2);
+        }}
+        {{
             SplitEnumWith1ConstantWithExplicitValues a = 42;
             
             assert(SplitEnumWith1ConstantWithExplicitValues_Constant1 == a);
@@ -60,18 +63,18 @@ int main(int argc, const char * argv[]) {
             assert([@"<unknown SplitEnumWith1ConstantWithExplicitValues: 43>" isEqualToString:SplitEnumWith1ConstantWithExplicitValuesToString(a)]);
             assert(!SplitEnumWith1ConstantWithExplicitValuesFromString(@"foo", &a));
         }}
-        if(0){{
+        {{
+            assert([AlignByLabel() count] == 8);
+            
             Align a = 1;
             
             assert(AlignLeft == a);
             assert([@"AlignLeft" isEqualToString:AlignToString(a)]);
-            printf("%s\n", [[AlignByValue() description] UTF8String]);
-            printf("%s\n", [AlignToString(AlignLeft) UTF8String]);
-            //assert(AlignFromString(AlignToString(AlignLeft), &a));
-            //assert(AlignLeft == a);
             
-            //a++;
-            //assert([@"AlignRight" isEqualToString:AlignToString(a)]);
+            assert(AlignFromString(AlignToString(AlignLeft), &a));
+            assert(AlignLeft == a);
+            
+            assert([@"<unknown Align: 2>" isEqualToString:AlignToString(2)]);
         }}
     }
     printf("success\n");

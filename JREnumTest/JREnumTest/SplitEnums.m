@@ -2,8 +2,10 @@
 
 JREnumDefine(SplitEnumWith1ConstantSansExplicitValues);
 
+JREnumDefine(SplitEnumWith2ConstantsSansExplicitValues);
+
 JREnumDefine(SplitEnumWith1ConstantWithExplicitValues);
 
 JREnumDefine(TestClassState);
 
-JROptionsDefine(Align);
+JREnumDefine(Align);
