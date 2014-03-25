@@ -88,7 +88,11 @@
             NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;	\
             int value; \
             if (valueString) { \
-                if ([valueString hasPrefix:@"0x"]) { \
+                NSRange shiftTokenRange = [valueString rangeOfString:@"<<"]; \
+                if (shiftTokenRange.location != NSNotFound) { \
+                    valueString = [valueString substringFromIndex:shiftTokenRange.location + 2]; \
+                    value = 1 << [valueString intValue]; \
+                } else if ([valueString hasPrefix:@"0x"]) { \
                     [[NSScanner scannerWithString:valueString] scanHexInt:(unsigned int*)&value]; \
                 } else { \
                     value = [valueString intValue]; \
