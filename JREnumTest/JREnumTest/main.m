@@ -23,6 +23,12 @@ JREnum(EnumWithPrefix,
        EnumWithPrefix2
        );
 
+JREnum(makeUpNameAge,
+       makeUpNameAgeYoung,
+       makeUpNameAgeOld,
+       makeUpNameAgeAncient);
+
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         {{

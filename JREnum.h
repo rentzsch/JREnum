@@ -21,6 +21,7 @@
     extern NSDictionary* ENUM_TYPENAME##ByValue();  \
     extern NSDictionary* ENUM_TYPENAME##ByLabel();  \
     extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
+    extern NSString* ENUM_TYPENAME##ToStringCutPrefix(int enumValue);    \
     extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
