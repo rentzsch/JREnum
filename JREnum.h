@@ -1,6 +1,6 @@
-// JREnum.h semver:1.0.1
+// JREnum.h semver:1.1
 //   Original implementation by Benedict Cohen: http://benedictcohen.co.uk
-//   Copyright (c) 2012-2013 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
+//   Copyright (c) 2012-2014 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
@@ -27,6 +27,8 @@
     static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
     _Pragma("clang diagnostic pop")
 
+//--
+
 #define JREnumDefine(ENUM_TYPENAME) \
     _JREnum_GenerateImplementation(ENUM_TYPENAME)
 
@@ -34,16 +36,33 @@
 
 #define _JREnum_GenerateImplementation(ENUM_TYPENAME)  \
     NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
-        NSArray *stringPairs = [_##ENUM_TYPENAME##_constants_string componentsSeparatedByString:@","];	\
+        NSString *constantsString = _##ENUM_TYPENAME##_constants_string; \
+        constantsString = [[constantsString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""]; \
+        if ([constantsString hasSuffix:@","]) { \
+            constantsString = [constantsString substringToIndex:[constantsString length]-1]; \
+        } \
+        NSArray *stringPairs = [constantsString componentsSeparatedByString:@","];	\
         NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];	\
-        int lastValue = -1;	\
+        int nextDefaultValue = 0;	\
         for (NSString *stringPair in stringPairs) {	\
             NSArray *labelAndValueString = [stringPair componentsSeparatedByString:@"="];	\
             NSString *label = [labelAndValueString objectAtIndex:0];	\
-            label = [label stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];    \
             NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;	\
-            int value = valueString ? [valueString intValue] : lastValue + 1;	\
-            lastValue = value;	\
+            int value; \
+            if (valueString) { \
+                NSRange shiftTokenRange = [valueString rangeOfString:@"<<"]; \
+                if (shiftTokenRange.location != NSNotFound) { \
+                    valueString = [valueString substringFromIndex:shiftTokenRange.location + 2]; \
+                    value = 1 << [valueString intValue]; \
+                } else if ([valueString hasPrefix:@"0x"]) { \
+                    [[NSScanner scannerWithString:valueString] scanHexInt:(unsigned int*)&value]; \
+                } else { \
+                    value = [valueString intValue]; \
+                } \
+            } else { \
+                value = nextDefaultValue; \
+            } \
+            nextDefaultValue = value + 1;	\
             [labelsAndValues addObject:label];	\
             [labelsAndValues addObject:[NSNumber numberWithInt:value]];	\
         }	\

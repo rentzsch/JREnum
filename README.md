@@ -25,7 +25,7 @@ This will generate the previous `typedef enum` and will also generate a correspo
 
 **NSString\* StreamStateToString(int value)**
 
-Given a value, will return the enum's string representation. For example `StreamStateToString(2)` would return `@"Stream_Connecting"`.
+Given a value, will return the enum's string representation. For example `StreamStateToString(2)` would return `@"Stream_Connected"`.
 
 When confronted with values not defined in the enumeration, this function will return a placeholder string explaining the situation. For example `StreamStateToString(2000)` would return `@"<unknown StreamState: 2000>"`.
 
@@ -71,9 +71,56 @@ You can also explicitly define enum integer values:
 
 In the above scenario, `Stream_Disconnected`'s value will be `42`, `Stream_Connecting`'s will be `43` and so on.
 
-JREnum currently only supports integer explicit values (bit shifts and masks won't work). Patches welcome.
+You can also use hex values:
+
+	JREnum(StreamState,
+	       Stream_Disconnected = 0x2A,
+	       Stream_Connecting,
+	       Stream_Connected,
+	       Stream_Disconnecting);
+
+That's semantically identical to the above.
+
+New in v1.1 you can use very simple bit-shift masks:
+
+	JREnum(Align,
+		   AlignLeft         = 1 << 0,
+		   AlignRight        = 1 << 1,
+		   AlignTop          = 1 << 2,
+		   AlignBottom       = 1 << 3,
+		   AlignTopLeft      = 0x05,
+		   AlignBottomLeft   = 0x09,
+		   AlignTopRight     = 0x06,
+		   AlignBottomRight  = 0x0A,
+		   );
+
+This helps where you want one variable to house a combination of flags:
+
+	Align botRight 		  = AlignBottomRight;
+	Align botRightBitWise = AlignBottom | AlignRight;
+
+	NSLog(@"Are They The Same: %@", (botRightBitWise == botRight) ? @"YES" : @"NO");
+	//=> Are They The Same: YES
+
+But better, because you can go to-and-fro string values:
+
+	NSLog(@"How is that combo aligned? %@", AlignToString(botRightBitWise));
+	//=> How is that combo aligned? AlignBottomRight
+
+## TODO
+
+- [Use NS_ENUM to declare enums](https://github.com/rentzsch/JREnum/issues/8)
 
 ## Version History
+
+### v1.1: Mar 25 2014
+
+* [NEW] Add support for hex constants. ([Alex Gray](https://github.com/rentzsch/JREnum/pull/5))
+* [NEW] Add support for very simple bit-shifting constants. (rentzsch)
+
+### v1.0.1: May 28 2013
+
+* [FIX] Suppress local unused variable warnings. ([maniak-dobrii](https://github.com/rentzsch/JREnum/commit/918f24f9b098358d062bbbccd6c66e0304be8caa))
 
 ### v1.0: Apr 09 2013
 

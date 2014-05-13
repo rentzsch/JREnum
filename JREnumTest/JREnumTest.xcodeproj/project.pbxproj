@@ -10,7 +10,6 @@
 		795439BE16756A7C00B88D38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795439BD16756A7C00B88D38 /* Foundation.framework */; };
 		795439C116756A7C00B88D38 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439C016756A7C00B88D38 /* main.m */; };
 		795439CE16756AE000B88D38 /* SplitEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439CD16756AE000B88D38 /* SplitEnums.m */; };
-		795439D91676641000B88D38 /* SplitEnumClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 795439D81676641000B88D38 /* SplitEnumClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,8 +32,6 @@
 		795439CB16756A9200B88D38 /* JREnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JREnum.h; path = ../../JREnum.h; sourceTree = "<group>"; };
 		795439CC16756AE000B88D38 /* SplitEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitEnums.h; sourceTree = "<group>"; };
 		795439CD16756AE000B88D38 /* SplitEnums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitEnums.m; sourceTree = "<group>"; };
-		795439D71676641000B88D38 /* SplitEnumClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitEnumClient.h; sourceTree = "<group>"; };
-		795439D81676641000B88D38 /* SplitEnumClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitEnumClient.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,8 +75,6 @@
 			isa = PBXGroup;
 			children = (
 				795439C016756A7C00B88D38 /* main.m */,
-				795439D71676641000B88D38 /* SplitEnumClient.h */,
-				795439D81676641000B88D38 /* SplitEnumClient.m */,
 				795439CC16756AE000B88D38 /* SplitEnums.h */,
 				795439CD16756AE000B88D38 /* SplitEnums.m */,
 				795439CB16756A9200B88D38 /* JREnum.h */,
@@ -122,7 +117,7 @@
 		795439B016756A7C00B88D38 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Jonathan 'Wolf' Rentzsch";
 			};
 			buildConfigurationList = 795439B316756A7C00B88D38 /* Build configuration list for PBXProject "JREnumTest" */;
@@ -149,7 +144,6 @@
 			files = (
 				795439C116756A7C00B88D38 /* main.m in Sources */,
 				795439CE16756AE000B88D38 /* SplitEnums.m in Sources */,
-				795439D91676641000B88D38 /* SplitEnumClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +154,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -190,7 +183,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
