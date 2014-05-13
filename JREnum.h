@@ -99,6 +99,15 @@
         return result;	\
     }	\
         \
+    NSString* ENUM_TYPENAME##ToStringCutPrefix(int enumValue) {	\
+        NSString *result = ENUM_TYPENAME##ToString(enumValue);	\
+        NSString *prefix = @"" #ENUM_TYPENAME;	\
+        if([result hasPrefix:prefix]) {	\
+            result = [result substringFromIndex:[prefix length]];	\
+        }	\
+        return result;	\
+    }	\
+        \
     BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
         NSNumber *value = [ENUM_TYPENAME##ByLabel() objectForKey:enumLabel];	\
         if (value) {	\
