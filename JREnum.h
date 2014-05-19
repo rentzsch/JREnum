@@ -21,8 +21,9 @@
     extern NSDictionary* ENUM_TYPENAME##ByValue();  \
     extern NSDictionary* ENUM_TYPENAME##ByLabel();  \
     extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
-    extern NSString* ENUM_TYPENAME##ToStringCutPrefix(int enumValue);    \
+    extern NSString* ENUM_TYPENAME##ToStringRemovingPrefix(int enumValue);    \
     extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
+    extern BOOL ENUM_TYPENAME##FromStringWithoutPrefix(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
     static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
@@ -100,7 +101,7 @@
         return result;	\
     }	\
         \
-    NSString* ENUM_TYPENAME##ToStringCutPrefix(int enumValue) {	\
+    NSString* ENUM_TYPENAME##ToStringRemovingPrefix(int enumValue) {	\
         NSString *result = ENUM_TYPENAME##ToString(enumValue);	\
         NSString *prefix = @"" #ENUM_TYPENAME;	\
         if([result hasPrefix:prefix]) {	\
@@ -117,4 +118,9 @@
         } else {	\
             return NO;	\
         }	\
-    }
+    }	\
+    	\
+    BOOL ENUM_TYPENAME##FromStringWithoutPrefix(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
+        NSString *prefix = @"" #ENUM_TYPENAME;	\
+        return ENUM_TYPENAME##FromString([prefix stringByAppendingString:enumLabel], enumValue);	\
+    }	\

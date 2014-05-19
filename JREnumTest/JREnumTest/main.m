@@ -124,8 +124,18 @@ int main(int argc, const char * argv[]) {
             assert([@"<unknown Align: 3>" isEqualToString:AlignToString(3)]);
         }}
         {{
-            assert([@"1" isEqualToString:EnumWithPrefixToStringCutPrefix(EnumWithPrefix1)]);
-            assert([@"2" isEqualToString:EnumWithPrefixToStringCutPrefix(EnumWithPrefix2)]);
+            assert([@"1" isEqualToString:EnumWithPrefixToStringRemovingPrefix(EnumWithPrefix1)]);
+            assert([@"2" isEqualToString:EnumWithPrefixToStringRemovingPrefix(EnumWithPrefix2)]);
+            
+            EnumWithPrefix enumWithPrefix;
+            BOOL success = EnumWithPrefixFromStringWithoutPrefix(@"1", &enumWithPrefix);
+            assert(success == YES);
+            assert(enumWithPrefix == EnumWithPrefix1);
+            
+            enumWithPrefix = 0;
+            success = EnumWithPrefixFromStringWithoutPrefix(@"2", &enumWithPrefix);
+            assert(success == YES);
+            assert(enumWithPrefix == EnumWithPrefix2);
         }}
     }
     printf("success\n");
