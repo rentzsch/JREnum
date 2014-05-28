@@ -14,14 +14,15 @@ The idea is to declare enum using JREnum, where all the enum elements have prefi
        
 and then:
 
-	enumNameToStringRemovingPrefix(enumNameFIRST) => @"FIRST" <br>
-	enumNameFromStringWithoutPrefix(@"FIRST", &anEnumName) => enumNameFIRST <br>
-	
+	enumNameToStringRemovingPrefix(enumNameFIRST) => @"FIRST"
+	enumNameFromStringWithoutPrefix(@"FIRST", &anEnumName) => enumNameFIRST
 As simple and convenient as:
 
 	webServiceParams[@"position"] = enumNameToStringRemovingPrefix(enumNameTHIRD); // specify third position
 	
 This approach is less verbose and reasonable (comparing to traditionall manual arrays/dictionaries solutions) if string constants don't change often. Autocomplete completes prefixes when enum elements are defined (didn't manage to create enum elements with prefix automatically, so one will have to type them by hand, if you know how this could be done - pull requests are wellcomed). Downside is that spaces are not supported and if string constants are often changed, the whole project has to be refactored (which is easy via XCode's rename feature).
+
+Now I'm experimenting with prefix to middle delimiters like "_", for example `enumName_enumItemName`
 
 ## JREnum
 
