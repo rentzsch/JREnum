@@ -5,9 +5,9 @@
 //   https://github.com/rentzsch/JREnum
 
 #define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
-    typedef enum {  \
+    typedef NS_ENUM(NSInteger, ENUM_TYPENAME) {  \
         ENUM_CONSTANTS  \
-    } ENUM_TYPENAME;    \
+    };    \
     static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
     _JREnum_GenerateImplementation(ENUM_TYPENAME)
 
