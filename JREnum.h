@@ -14,27 +14,19 @@
 //--
 
 #define JREnumDeclare(ENUM_TYPENAME, ENUM_CONSTANTS...) \
-    typedef enum {  \
-        ENUM_CONSTANTS  \
-    } ENUM_TYPENAME;    \
-    extern NSDictionary* ENUM_TYPENAME##ByValue();  \
-    extern NSDictionary* ENUM_TYPENAME##ByLabel();  \
-    extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
-    extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
-    _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
-    _Pragma("clang diagnostic pop")
+    _Pragma("GCC warning \"JREnumDeclare is deprecated and should be replaced with JREnum.\"") \
+    JREnum(ENUM_TYPENAME, ENUM_CONSTANTS)
 
 //--
 
+
 #define JREnumDefine(ENUM_TYPENAME) \
-    _JREnum_GenerateImplementation(ENUM_TYPENAME)
+    _Pragma("GCC warning \"JREnumDefine is deprecated and should be removed.\"") \
 
 //--
 
 #define _JREnum_GenerateImplementation(ENUM_TYPENAME)  \
-    NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
+    static NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
         NSString *constantsString = _##ENUM_TYPENAME##_constants_string; \
         constantsString = [[constantsString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""]; \
         if ([constantsString hasSuffix:@","]) { \
@@ -68,7 +60,7 @@
         return labelsAndValues;	\
     }	\
         \
-    NSDictionary* ENUM_TYPENAME##ByValue() {	\
+    static NSDictionary* ENUM_TYPENAME##ByValue() {	\
         NSArray *constants = _JREnumParse##ENUM_TYPENAME##ConstantsString();	\
         NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];	\
         for (NSUInteger i = 0; i < [constants count]; i += 2) {	\
@@ -79,7 +71,7 @@
         return result;	\
     }	\
         \
-    NSDictionary* ENUM_TYPENAME##ByLabel() {	\
+    static NSDictionary* ENUM_TYPENAME##ByLabel() {	\
         NSArray *constants = _JREnumParse##ENUM_TYPENAME##ConstantsString();	\
         NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];	\
         for (NSUInteger i = 0; i < [constants count]; i += 2) {	\
@@ -90,7 +82,7 @@
         return result;	\
     }	\
         \
-    NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
+    static NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
         NSString *result = [ENUM_TYPENAME##ByValue() objectForKey:[NSNumber numberWithInt:enumValue]];	\
         if (!result) {	\
             result = [NSString stringWithFormat:@"<unknown "#ENUM_TYPENAME": %d>", enumValue];	\
@@ -98,7 +90,7 @@
         return result;	\
     }	\
         \
-    BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
+    static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
         NSNumber *value = [ENUM_TYPENAME##ByLabel() objectForKey:enumLabel];	\
         if (value) {	\
             *enumValue = (ENUM_TYPENAME)[value intValue];	\
