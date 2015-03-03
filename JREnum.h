@@ -95,9 +95,10 @@ static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
  @return The label for enumValue.
  */
 static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, NSInteger enumValue) {
-    NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:[NSNumber numberWithInt:enumValue]];
+    NSNumber *number = [NSNumber numberWithInteger:enumValue];
+    NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:number];
     if (!result) {
-        result = [NSString stringWithFormat:@"<unknown %@: %d>", enumTypeName, enumValue];
+        result = [NSString stringWithFormat:@"<unknown %@: %@>", enumTypeName, number];
     }
     return result;
 }
