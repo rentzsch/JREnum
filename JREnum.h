@@ -5,13 +5,25 @@
 //   https://github.com/rentzsch/JREnum
 
 #pragma mark - Private functions (called by functions defined in macros)
+/**
+ Parses enumString into an array of interleaved labels and keys.
+ 
+ TODO: Document restrictions on key. The follow, for example, will have strange results:
+     1. JREnumValue = NSNotFound
+     2. JREnumNewValue = 0, JRValueOldEnum = JREnumNewValue,
+     3. ArfVoid = 0, Arf1, Arf2 = (Arf1 * (2 + ArfVoid)),
+ It's possible to improve the function so that it can parse cases 2 and 3 but not case 1.
 
-static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *rawString) {
-    NSString *enumString = [[rawString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
-    if ([enumString hasSuffix:@","]) {
-        enumString = [enumString substringToIndex:[enumString length]-1];
+ @param enumString a string of comma delimitted labels and optional keys that form a valid C enum body.
+
+ @return an array of interleaved labels and keys.
+ */
+static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *enumString) {
+    NSString *normalized = [[enumString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
+    if ([normalized hasSuffix:@","]) {
+        normalized = [normalized substringToIndex:[normalized length]-1];
     }
-    NSArray *stringPairs = [enumString componentsSeparatedByString:@","];
+    NSArray *stringPairs = [normalized componentsSeparatedByString:@","];
     NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];
     int nextDefaultValue = 0;
     for (NSString *stringPair in stringPairs) {
@@ -39,6 +51,13 @@ static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *rawStrin
     return labelsAndValues;
 }
 
+/**
+ Converts a labels & values array into a dictionary. If multiple labels have the same value then the dictionary will contain the last matching label.
+
+ @param labelsAndValues An array of interleaved labels and values.
+
+ @return a dictionary were the keys are the enum values and the values are the enum labels.
+ */
 static NSDictionary* _JRPrivate_EnumByValue(NSArray *labelsAndValues) {
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
     for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
@@ -49,6 +68,13 @@ static NSDictionary* _JRPrivate_EnumByValue(NSArray *labelsAndValues) {
     return result;
 }
 
+/**
+ Converts a labels & values array into a dictionary.
+
+ @param labelsAndValues An array of interleaved labels and values.
+
+ @return a dictionary were the keys are the enum labels and the values and the enum values.
+ */
 static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
     for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
@@ -59,6 +85,15 @@ static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
     return result;
 }
 
+/**
+ Returns an enum label as a string for the given enum value. If multiple labels have the same value then the result will be the label that was defined latest in the enum.
+
+ @param labelsAndValues An array of interleaved labels and values.
+ @param enumTypeName    The name of the enum.
+ @param enumValue       The value to lookup.
+
+ @return The label for enumValue.
+ */
 static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, int enumValue) {
     NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:[NSNumber numberWithInt:enumValue]];
     if (!result) {
@@ -67,6 +102,15 @@ static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enu
     return result;
 }
 
+/**
+ Returns by reference the the value for the specified label.
+
+ @param labelsAndValues An array of interleaved labels and values.
+ @param enumLabel       The label to lookup.
+ @param enumValue       On return contains the value for the specified label.
+
+ @return YES on success otherwise NO.
+ */
 static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) {
     NSNumber *value = [_JRPrivate_EnumByLabel(labelsAndValues) objectForKey:enumLabel];
     if (value) {
