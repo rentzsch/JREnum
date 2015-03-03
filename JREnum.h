@@ -9,7 +9,7 @@
  Parses enumString into an array of interleaved labels and keys.
  
  TODO: Document restrictions on key. The follow, for example, will have strange results:
-     1. JREnumValue = NSNotFound
+     1. JREnumValue = NSNotFound (NSNotFound is defined as a enum value. If it were `#define`d then it would work as we'd receive the post-processed value.)
      2. JREnumNewValue = 0, JRValueOldEnum = JREnumNewValue,
      3. ArfVoid = 0, Arf1, Arf2 = (Arf1 * (2 + ArfVoid)),
  It's possible to improve the function so that it can parse cases 2 and 3 but not case 1.
@@ -135,7 +135,7 @@ typedef NS_ENUM(NSInteger, ENUM_TYPENAME) {  \
 \
 \
 static NSArray* _##ENUM_TYPENAME##LabelsAndValues() {	\
-    NSString *enumString = @"" #ENUM_CONSTANTS; \
+    static NSString *enumString = @"" #ENUM_CONSTANTS; \
     return _JRPrivate_ParseEnumLabelsAndValuesFromString(enumString); \
 } \
 \
