@@ -46,7 +46,7 @@ static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *enumStri
         }
         nextDefaultValue = value + 1;
         [labelsAndValues addObject:label];
-        [labelsAndValues addObject:[NSNumber numberWithInt:value]];
+        [labelsAndValues addObject:[NSNumber numberWithInteger:value]];
     }
     return labelsAndValues;
 }
