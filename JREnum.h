@@ -25,12 +25,12 @@ static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *enumStri
     }
     NSArray *stringPairs = [normalized componentsSeparatedByString:@","];
     NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];
-    int nextDefaultValue = 0;
+    NSInteger nextDefaultValue = 0;
     for (NSString *stringPair in stringPairs) {
         NSArray *labelAndValueString = [stringPair componentsSeparatedByString:@"="];
         NSString *label = [labelAndValueString objectAtIndex:0];
         NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;
-        int value;
+        NSInteger value;
         if (valueString) {
             NSRange shiftTokenRange = [valueString rangeOfString:@"<<"];
             if (shiftTokenRange.location != NSNotFound) {
@@ -94,7 +94,7 @@ static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
 
  @return The label for enumValue.
  */
-static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, int enumValue) {
+static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, NSInteger enumValue) {
     NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:[NSNumber numberWithInt:enumValue]];
     if (!result) {
         result = [NSString stringWithFormat:@"<unknown %@: %d>", enumTypeName, enumValue];
@@ -148,7 +148,7 @@ static NSDictionary* ENUM_TYPENAME##ByLabel() {	\
     return _JRPrivate_EnumByLabel(labelsAndValues); \
 }	\
 \
-static NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
+static NSString* ENUM_TYPENAME##ToString(NSInteger enumValue) {	\
     NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
     NSString *enumTypeName = @"" #ENUM_TYPENAME; \
     return _JRPrivate_EnumToString(labelsAndValues, enumTypeName, enumValue); \
