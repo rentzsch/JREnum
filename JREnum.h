@@ -4,6 +4,8 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
+#pragma mark - Private functions (called by functions defined in macros)
+
 static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *rawString) {
     NSString *enumString = [[rawString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
     if ([enumString hasSuffix:@","]) {
@@ -77,6 +79,9 @@ static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLa
 
 
 
+#pragma mark - JREnum macro
+//--
+
 #define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
 typedef NS_ENUM(NSInteger, ENUM_TYPENAME) {  \
     ENUM_CONSTANTS  \
@@ -109,6 +114,9 @@ static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumVa
     return _JRPrivate_EnumFromString(labelsAndValues, enumLabel, enumValue); \
 }
 
+
+
+#pragma mark - Deprecated macros
 //--
 
 #define JREnumDeclare(ENUM_TYPENAME, ENUM_CONSTANTS...) \
@@ -116,7 +124,6 @@ static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumVa
     JREnum(ENUM_TYPENAME, ENUM_CONSTANTS)
 
 //--
-
 
 #define JREnumDefine(ENUM_TYPENAME) \
     _Pragma("GCC warning \"JREnumDefine is deprecated and should be removed.\"") \
