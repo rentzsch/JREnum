@@ -4,106 +4,175 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
-#define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
-    typedef enum {  \
-        ENUM_CONSTANTS  \
-    } ENUM_TYPENAME;    \
-    static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
-    _JREnum_GenerateImplementation(ENUM_TYPENAME)
+#pragma mark - Private functions (called by functions defined in macros)
+/**
+ Parses enumString into an array of interleaved labels and keys.
+ 
+ TODO: Document restrictions on key. The follow, for example, will have strange results:
+     1. JREnumValue = NSNotFound (NSNotFound is defined as a enum value. If it were `#define`d then it would work as we'd receive the post-processed value.)
+     2. JREnumNewValue = 0, JRValueOldEnum = JREnumNewValue,
+     3. ArfVoid = 0, Arf1, Arf2 = (Arf1 * (2 + ArfVoid)),
+ It's possible to improve the function so that it can parse cases 2 and 3 but not case 1.
 
+ @param enumString a string of comma delimitted labels and optional keys that form a valid C enum body.
+
+ @return an array of interleaved labels and keys.
+ */
+static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *enumString) {
+    NSString *normalized = [[enumString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
+    if ([normalized hasSuffix:@","]) {
+        normalized = [normalized substringToIndex:[normalized length]-1];
+    }
+    NSArray *stringPairs = [normalized componentsSeparatedByString:@","];
+    NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];
+    NSInteger nextDefaultValue = 0;
+    for (NSString *stringPair in stringPairs) {
+        NSArray *labelAndValueString = [stringPair componentsSeparatedByString:@"="];
+        NSString *label = [labelAndValueString objectAtIndex:0];
+        NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;
+        NSInteger value;
+        if (valueString) {
+            NSRange shiftTokenRange = [valueString rangeOfString:@"<<"];
+            if (shiftTokenRange.location != NSNotFound) {
+                valueString = [valueString substringFromIndex:shiftTokenRange.location + 2];
+                value = 1 << [valueString intValue];
+            } else if ([valueString hasPrefix:@"0x"]) {
+                [[NSScanner scannerWithString:valueString] scanHexInt:(unsigned int*)&value];
+            } else {
+                value = [valueString intValue];
+            }
+        } else {
+            value = nextDefaultValue;
+        }
+        nextDefaultValue = value + 1;
+        [labelsAndValues addObject:label];
+        [labelsAndValues addObject:[NSNumber numberWithInteger:value]];
+    }
+    return labelsAndValues;
+}
+
+/**
+ Converts a labels & values array into a dictionary. If multiple labels have the same value then the dictionary will contain the last matching label.
+
+ @param labelsAndValues An array of interleaved labels and values.
+
+ @return a dictionary were the keys are the enum values and the values are the enum labels.
+ */
+static NSDictionary* _JRPrivate_EnumByValue(NSArray *labelsAndValues) {
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
+    for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
+        NSString *label = [labelsAndValues objectAtIndex:i];
+        NSNumber *value = [labelsAndValues objectAtIndex:i+1];
+        [result setObject:label forKey:value];
+    }
+    return result;
+}
+
+/**
+ Converts a labels & values array into a dictionary.
+
+ @param labelsAndValues An array of interleaved labels and values.
+
+ @return a dictionary were the keys are the enum labels and the values and the enum values.
+ */
+static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
+    for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
+        NSString *label = [labelsAndValues objectAtIndex:i];
+        NSNumber *value = [labelsAndValues objectAtIndex:i+1];
+        [result setObject:value forKey:label];
+    }
+    return result;
+}
+
+/**
+ Returns an enum label as a string for the given enum value. If multiple labels have the same value then the result will be the label that was defined latest in the enum.
+
+ @param labelsAndValues An array of interleaved labels and values.
+ @param enumTypeName    The name of the enum.
+ @param enumValue       The value to lookup.
+
+ @return The label for enumValue.
+ */
+static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, NSInteger enumValue) {
+    NSNumber *number = [NSNumber numberWithInteger:enumValue];
+    NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:number];
+    if (!result) {
+        result = [NSString stringWithFormat:@"<unknown %@: %@>", enumTypeName, number];
+    }
+    return result;
+}
+
+/**
+ Returns by reference the the value for the specified label.
+
+ @param labelsAndValues An array of interleaved labels and values.
+ @param enumLabel       The label to lookup.
+ @param enumValue       On return contains the value for the specified label.
+
+ @return YES on success otherwise NO.
+ */
+static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) __attribute__((nonnull(3)));
+static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) {
+    NSNumber *value = [_JRPrivate_EnumByLabel(labelsAndValues) objectForKey:enumLabel];
+    if (value) {
+        *enumValue = [value integerValue];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+
+
+#pragma mark - JREnum macro
+//--
+
+#define JREnum(ENUM_TYPENAME, ENUM_CONSTANTS...)    \
+typedef NS_ENUM(NSInteger, ENUM_TYPENAME) {  \
+    ENUM_CONSTANTS  \
+};    \
+\
+\
+static NSArray* _##ENUM_TYPENAME##LabelsAndValues() {	\
+    static NSString *enumString = @"" #ENUM_CONSTANTS; \
+    return _JRPrivate_ParseEnumLabelsAndValuesFromString(enumString); \
+} \
+\
+static NSDictionary* ENUM_TYPENAME##ByValue() {	\
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumByValue(labelsAndValues); \
+}	\
+\
+static NSDictionary* ENUM_TYPENAME##ByLabel() {	\
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumByLabel(labelsAndValues); \
+}	\
+\
+static NSString* ENUM_TYPENAME##ToString(NSInteger enumValue) {	\
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    NSString *enumTypeName = @"" #ENUM_TYPENAME; \
+    return _JRPrivate_EnumToString(labelsAndValues, enumTypeName, enumValue); \
+}	\
+\
+static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) __attribute__((nonnull(2))); \
+static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumFromString(labelsAndValues, enumLabel, enumValue); \
+}
+
+
+
+#pragma mark - Deprecated macros
 //--
 
 #define JREnumDeclare(ENUM_TYPENAME, ENUM_CONSTANTS...) \
-    typedef enum {  \
-        ENUM_CONSTANTS  \
-    } ENUM_TYPENAME;    \
-    extern NSDictionary* ENUM_TYPENAME##ByValue();  \
-    extern NSDictionary* ENUM_TYPENAME##ByLabel();  \
-    extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
-    extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
-    _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static NSString *_##ENUM_TYPENAME##_constants_string = @"" #ENUM_CONSTANTS; \
-    _Pragma("clang diagnostic pop")
+    _Pragma("GCC warning \"JREnumDeclare is deprecated and should be replaced with JREnum.\"") \
+    JREnum(ENUM_TYPENAME, ENUM_CONSTANTS)
 
 //--
 
 #define JREnumDefine(ENUM_TYPENAME) \
-    _JREnum_GenerateImplementation(ENUM_TYPENAME)
+    _Pragma("GCC warning \"JREnumDefine is deprecated and should be removed.\"") \
 
 //--
-
-#define _JREnum_GenerateImplementation(ENUM_TYPENAME)  \
-    NSArray* _JREnumParse##ENUM_TYPENAME##ConstantsString() {	\
-        NSString *constantsString = _##ENUM_TYPENAME##_constants_string; \
-        constantsString = [[constantsString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""]; \
-        if ([constantsString hasSuffix:@","]) { \
-            constantsString = [constantsString substringToIndex:[constantsString length]-1]; \
-        } \
-        NSArray *stringPairs = [constantsString componentsSeparatedByString:@","];	\
-        NSMutableArray *labelsAndValues = [NSMutableArray arrayWithCapacity:[stringPairs count]];	\
-        int nextDefaultValue = 0;	\
-        for (NSString *stringPair in stringPairs) {	\
-            NSArray *labelAndValueString = [stringPair componentsSeparatedByString:@"="];	\
-            NSString *label = [labelAndValueString objectAtIndex:0];	\
-            NSString *valueString = [labelAndValueString count] > 1 ? [labelAndValueString objectAtIndex:1] : nil;	\
-            int value; \
-            if (valueString) { \
-                NSRange shiftTokenRange = [valueString rangeOfString:@"<<"]; \
-                if (shiftTokenRange.location != NSNotFound) { \
-                    valueString = [valueString substringFromIndex:shiftTokenRange.location + 2]; \
-                    value = 1 << [valueString intValue]; \
-                } else if ([valueString hasPrefix:@"0x"]) { \
-                    [[NSScanner scannerWithString:valueString] scanHexInt:(unsigned int*)&value]; \
-                } else { \
-                    value = [valueString intValue]; \
-                } \
-            } else { \
-                value = nextDefaultValue; \
-            } \
-            nextDefaultValue = value + 1;	\
-            [labelsAndValues addObject:label];	\
-            [labelsAndValues addObject:[NSNumber numberWithInt:value]];	\
-        }	\
-        return labelsAndValues;	\
-    }	\
-        \
-    NSDictionary* ENUM_TYPENAME##ByValue() {	\
-        NSArray *constants = _JREnumParse##ENUM_TYPENAME##ConstantsString();	\
-        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];	\
-        for (NSUInteger i = 0; i < [constants count]; i += 2) {	\
-            NSString *label = [constants objectAtIndex:i];	\
-            NSNumber *value = [constants objectAtIndex:i+1];	\
-            [result setObject:label forKey:value];	\
-        }	\
-        return result;	\
-    }	\
-        \
-    NSDictionary* ENUM_TYPENAME##ByLabel() {	\
-        NSArray *constants = _JREnumParse##ENUM_TYPENAME##ConstantsString();	\
-        NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];	\
-        for (NSUInteger i = 0; i < [constants count]; i += 2) {	\
-            NSString *label = [constants objectAtIndex:i];	\
-            NSNumber *value = [constants objectAtIndex:i+1];	\
-            [result setObject:value forKey:label];	\
-        }	\
-        return result;	\
-    }	\
-        \
-    NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
-        NSString *result = [ENUM_TYPENAME##ByValue() objectForKey:[NSNumber numberWithInt:enumValue]];	\
-        if (!result) {	\
-            result = [NSString stringWithFormat:@"<unknown "#ENUM_TYPENAME": %d>", enumValue];	\
-        }	\
-        return result;	\
-    }	\
-        \
-    BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
-        NSNumber *value = [ENUM_TYPENAME##ByLabel() objectForKey:enumLabel];	\
-        if (value) {	\
-            *enumValue = (ENUM_TYPENAME)[value intValue];	\
-            return YES;	\
-        } else {	\
-            return NO;	\
-        }	\
-    }
