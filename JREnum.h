@@ -4,7 +4,7 @@
 //   Some rights reserved: http://opensource.org/licenses/mit
 //   https://github.com/rentzsch/JREnum
 
-static NSArray* _JRPrivate_ParseEnumFromString(NSString *rawString) {
+static NSArray* _JRPrivate_ParseEnumLabelsAndValuesFromString(NSString *rawString) {
     NSString *enumString = [[rawString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
     if ([enumString hasSuffix:@","]) {
         enumString = [enumString substringToIndex:[enumString length]-1];
@@ -37,36 +37,36 @@ static NSArray* _JRPrivate_ParseEnumFromString(NSString *rawString) {
     return labelsAndValues;
 }
 
-static NSDictionary* _JRPrivate_EnumByValue(NSArray *constants) {
-    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];
-    for (NSUInteger i = 0; i < [constants count]; i += 2) {
-        NSString *label = [constants objectAtIndex:i];
-        NSNumber *value = [constants objectAtIndex:i+1];
+static NSDictionary* _JRPrivate_EnumByValue(NSArray *labelsAndValues) {
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
+    for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
+        NSString *label = [labelsAndValues objectAtIndex:i];
+        NSNumber *value = [labelsAndValues objectAtIndex:i+1];
         [result setObject:label forKey:value];
     }
     return result;
 }
 
-static NSDictionary* _JRPrivate_EnumByLabel(NSArray *constants) {
-    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[constants count] / 2];
-    for (NSUInteger i = 0; i < [constants count]; i += 2) {
-        NSString *label = [constants objectAtIndex:i];
-        NSNumber *value = [constants objectAtIndex:i+1];
+static NSDictionary* _JRPrivate_EnumByLabel(NSArray *labelsAndValues) {
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[labelsAndValues count] / 2];
+    for (NSUInteger i = 0; i < [labelsAndValues count]; i += 2) {
+        NSString *label = [labelsAndValues objectAtIndex:i];
+        NSNumber *value = [labelsAndValues objectAtIndex:i+1];
         [result setObject:value forKey:label];
     }
     return result;
 }
 
-static NSString* _JRPrivate_EnumToString(NSArray *constants, NSString *enumTypeName, int enumValue) {
-    NSString *result = [_JRPrivate_EnumByValue(constants) objectForKey:[NSNumber numberWithInt:enumValue]];
+static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enumTypeName, int enumValue) {
+    NSString *result = [_JRPrivate_EnumByValue(labelsAndValues) objectForKey:[NSNumber numberWithInt:enumValue]];
     if (!result) {
         result = [NSString stringWithFormat:@"<unknown %@: %d>", enumTypeName, enumValue];
     }
     return result;
 }
 
-static BOOL _JRPrivate_EnumFromString(NSArray *constants, NSString *enumLabel, NSInteger *enumValue) {
-    NSNumber *value = [_JRPrivate_EnumByLabel(constants) objectForKey:enumLabel];
+static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) {
+    NSNumber *value = [_JRPrivate_EnumByLabel(labelsAndValues) objectForKey:enumLabel];
     if (value) {
         *enumValue = [value integerValue];
         return YES;
@@ -83,30 +83,30 @@ typedef NS_ENUM(NSInteger, ENUM_TYPENAME) {  \
 };    \
 \
 \
-static NSArray* _##ENUM_TYPENAME##KeysAndValues() {	\
-    NSString *constantsString = @"" #ENUM_CONSTANTS; \
-    return _JRPrivate_ParseEnumFromString(constantsString); \
+static NSArray* _##ENUM_TYPENAME##LabelsAndValues() {	\
+    NSString *enumString = @"" #ENUM_CONSTANTS; \
+    return _JRPrivate_ParseEnumLabelsAndValuesFromString(enumString); \
 } \
 \
 static NSDictionary* ENUM_TYPENAME##ByValue() {	\
-    NSArray *constants = _##ENUM_TYPENAME##KeysAndValues();	\
-    return _JRPrivate_EnumByValue(constants); \
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumByValue(labelsAndValues); \
 }	\
 \
 static NSDictionary* ENUM_TYPENAME##ByLabel() {	\
-    NSArray *constants = _##ENUM_TYPENAME##KeysAndValues();	\
-    return _JRPrivate_EnumByLabel(constants); \
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumByLabel(labelsAndValues); \
 }	\
 \
 static NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
-    NSArray *constants = _##ENUM_TYPENAME##KeysAndValues();	\
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
     NSString *enumTypeName = @"" #ENUM_TYPENAME; \
-    return _JRPrivate_EnumToString(constants, enumTypeName, enumValue); \
+    return _JRPrivate_EnumToString(labelsAndValues, enumTypeName, enumValue); \
 }	\
 \
 static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
-    NSArray *constants = _##ENUM_TYPENAME##KeysAndValues();	\
-    return _JRPrivate_EnumFromString(constants, enumLabel, enumValue); \
+    NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
+    return _JRPrivate_EnumFromString(labelsAndValues, enumLabel, enumValue); \
 }
 
 //--
