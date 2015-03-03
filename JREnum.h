@@ -111,6 +111,7 @@ static NSString* _JRPrivate_EnumToString(NSArray *labelsAndValues, NSString *enu
 
  @return YES on success otherwise NO.
  */
+static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) __attribute__((nonnull(3)));
 static BOOL _JRPrivate_EnumFromString(NSArray *labelsAndValues, NSString *enumLabel, NSInteger *enumValue) {
     NSNumber *value = [_JRPrivate_EnumByLabel(labelsAndValues) objectForKey:enumLabel];
     if (value) {
@@ -153,6 +154,7 @@ static NSString* ENUM_TYPENAME##ToString(int enumValue) {	\
     return _JRPrivate_EnumToString(labelsAndValues, enumTypeName, enumValue); \
 }	\
 \
+static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) __attribute__((nonnull(2))); \
 static BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue) {	\
     NSArray *labelsAndValues = _##ENUM_TYPENAME##LabelsAndValues();	\
     return _JRPrivate_EnumFromString(labelsAndValues, enumLabel, enumValue); \
