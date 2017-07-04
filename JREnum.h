@@ -17,8 +17,8 @@
     typedef enum {  \
         ENUM_CONSTANTS  \
     } ENUM_TYPENAME;    \
-    extern NSDictionary* ENUM_TYPENAME##ByValue();  \
-    extern NSDictionary* ENUM_TYPENAME##ByLabel();  \
+    extern NSDictionary* ENUM_TYPENAME##ByValue(void);  \
+    extern NSDictionary* ENUM_TYPENAME##ByLabel(void);  \
     extern NSString* ENUM_TYPENAME##ToString(int enumValue);    \
     extern BOOL ENUM_TYPENAME##FromString(NSString *enumLabel, ENUM_TYPENAME *enumValue);   \
     _Pragma("clang diagnostic push") \
