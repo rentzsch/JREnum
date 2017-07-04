@@ -113,6 +113,10 @@ But better, because you can go to-and-fro string values:
 
 ## Version History
 
+### v1.2: Jul 4 2017
+
+* [CHANGE] Add explicit `void` to generated function argument list to satisfy Xcode 9’s on-by-default `-Wstrict-prototypes`. See: <https://stackoverflow.com/a/44473380/5260>. [issue 14](https://github.com/rentzsch/JREnum/issues/14) (rentzsch)
+
 ### v1.1: Mar 25 2014
 
 * [NEW] Add support for hex constants. ([Alex Gray](https://github.com/rentzsch/JREnum/pull/5))
