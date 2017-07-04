@@ -1,6 +1,30 @@
 # JREnum
 
-Original [idea](https://twitter.com/benedictC/status/277867522869571584) and [implementation](https://gist.github.com/4246759) by [Benedict Cohen](http://benedictcohen.co.uk).
+Original [idea](https://twitter.com/benedictC/status/277867522869571584) and [implementation](https://gist.github.com/4246759) by [Benedict Cohen](http://benedictcohen.co.uk). This is a fork from original repo by **Jonathan 'Wolf' Rentzsch**.
+
+## My Additions
+Added **%enumName%ToStringRemovingPrefix** and **%enumName%FromStringWithoutPrefix** functions as an web service parameter constant string management approach experiment.
+
+The idea is to declare enum using JREnum, where all the enum elements have prefix equal to enum name and suffix to a constant string, like:
+
+	JREnum(enumName,
+	       enumNameFIRST,
+	       enumNameSECOND,
+	       enumNameTHIRD);
+       
+and then:
+
+	enumNameToStringRemovingPrefix(enumNameFIRST) => @"FIRST"
+	enumNameFromStringWithoutPrefix(@"FIRST", &anEnumName) => enumNameFIRST
+As simple and convenient as:
+
+	webServiceParams[@"position"] = enumNameToStringRemovingPrefix(enumNameTHIRD); // specify third position
+	
+This approach is less verbose and reasonable (comparing to traditionall manual arrays/dictionaries solutions) if string constants don't change often. Autocomplete completes prefixes when enum elements are defined (didn't manage to create enum elements with prefix automatically, so one will have to type them by hand, if you know how this could be done - pull requests are wellcomed). Downside is that spaces are not supported and if string constants are often changed, the whole project has to be refactored (which is easy via XCode's rename feature).
+
+Now I'm experimenting with prefix to middle delimiters like "_", for example `enumName_enumItemName`
+
+## JREnum
 
 JREnum is a macro that automates creation of functions that blast enums from boring primitive compile-time-land to the fun-filled party environment of runtime.
 

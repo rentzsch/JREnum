@@ -18,6 +18,17 @@ JREnum(EnumWith3BitshiftConstants,
        EnumWith2BitshiftConstants_1073741824  = 1 << 30,
        );
 
+JREnum(EnumWithPrefix,
+       EnumWithPrefix1,
+       EnumWithPrefix2
+       );
+
+JREnum(makeUpNameAge,
+       makeUpNameAgeYoung,
+       makeUpNameAgeOld,
+       makeUpNameAgeAncient);
+
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         {{
@@ -37,6 +48,8 @@ int main(int argc, const char * argv[]) {
             a++;
             assert([@"<unknown EnumWith1ConstantSansExplicitValues: 1>" isEqualToString:EnumWith1ConstantSansExplicitValuesToString(a)]);
             assert(!EnumWith1ConstantSansExplicitValuesFromString(@"foo", &a));
+            
+            
         }}
         {{
             assert([EnumWith1ConstantSansExplicitValuesTrailingCommaByLabel() count] == 1);
@@ -110,8 +123,21 @@ int main(int argc, const char * argv[]) {
             
             assert([@"<unknown Align: 3>" isEqualToString:AlignToString(3)]);
         }}
+        {{
+            assert([@"1" isEqualToString:EnumWithPrefixToStringRemovingPrefix(EnumWithPrefix1)]);
+            assert([@"2" isEqualToString:EnumWithPrefixToStringRemovingPrefix(EnumWithPrefix2)]);
+            
+            EnumWithPrefix enumWithPrefix;
+            BOOL success = EnumWithPrefixFromStringWithoutPrefix(@"1", &enumWithPrefix);
+            assert(success == YES);
+            assert(enumWithPrefix == EnumWithPrefix1);
+            
+            enumWithPrefix = 0;
+            success = EnumWithPrefixFromStringWithoutPrefix(@"2", &enumWithPrefix);
+            assert(success == YES);
+            assert(enumWithPrefix == EnumWithPrefix2);
+        }}
     }
     printf("success\n");
     return 0;
 }
-
